@@ -22,10 +22,7 @@ export const GoogleOAuthButton: React.FC<GoogleOAuthButtonProps> = ({ role, onSu
   const [clientId, setClientId] = useState<string>("");
   const [showConfig, setShowConfig] = useState(false);
 
-  const [accounts, setAccounts] = useState<Array<{ name: string; email: string; color: string }>>([
-    { name: "jay pamar", email: "jayshanti567@gmail.com", color: "bg-purple-600" },
-    { name: "jay", email: "xyz562007@gmail.com", color: "bg-teal-600" },
-  ]);
+  const [accounts, setAccounts] = useState<Array<{ name: string; email: string; color: string }>>([]);
 
   useEffect(() => {
     const savedId = localStorage.getItem("prabha_google_client_id") || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
@@ -135,6 +132,7 @@ export const GoogleOAuthButton: React.FC<GoogleOAuthButtonProps> = ({ role, onSu
       });
       google.accounts.id.prompt();
     } else {
+      setShowCustomInput(accounts.length === 0);
       setIsChooserOpen(true);
     }
   };
