@@ -204,10 +204,7 @@ export const GoogleOAuthButton: React.FC<GoogleOAuthButtonProps> = ({ role, onSu
 
   return (
     <div className="w-full space-y-2">
-      {/* Official Google GSI Render Button Container */}
-      <div ref={googleBtnContainerRef} className="w-full overflow-hidden rounded-xl"></div>
-
-      {/* Official Native Sign In with Google Trigger Button */}
+      {/* 1 Single Official Sign In with Google Trigger Button */}
       <button
         type="button"
         disabled={signingIn}
