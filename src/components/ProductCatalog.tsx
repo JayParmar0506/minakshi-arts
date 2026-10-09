@@ -50,17 +50,21 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   };
 
   const handleDeleteProduct = async (id: string) => {
+    // Optimistic UI update
+    setAllProducts((prev) => prev.filter((p) => p.id !== id && p.name !== id));
+    showToast("Product deleted successfully!");
+
     try {
-      const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/products/${encodeURIComponent(id)}`, { method: "DELETE" });
       if (res.ok) {
-        showToast("Product deleted successfully!");
         fetchProducts();
       } else {
-        alert("Failed to delete product.");
+        console.error("Server delete response not ok");
+        fetchProducts();
       }
     } catch (err) {
       console.error("Delete product error:", err);
-      alert("Error deleting product.");
+      fetchProducts();
     }
   };
 

@@ -60,7 +60,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
 
           {/* Admin Edit & Delete Buttons OR Client Favorite Button */}
           {isAdmin ? (
-            <div className="absolute top-3 right-3 flex items-center gap-1.5 z-10">
+            <div className="absolute top-3 right-3 flex items-center gap-2 z-20">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -72,7 +72,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
                 }}
                 aria-label="Edit Product"
                 title="Edit Product Name, Price, Photo, & Details"
-                className="px-3 py-1.5 rounded-full bg-gradient-to-r from-gold-500 to-terracotta-600 text-obsidian font-bold hover:scale-105 transition-all cursor-pointer shadow-lg shadow-gold-500/30 flex items-center gap-1 text-[11px]"
+                className="px-3.5 py-2 rounded-full bg-gradient-to-r from-gold-500 to-terracotta-600 text-obsidian font-bold hover:scale-105 transition-all cursor-pointer shadow-lg shadow-gold-500/30 flex items-center gap-1.5 text-xs sm:text-[11px]"
               >
                 <Edit className="w-3.5 h-3.5" />
                 <span className="uppercase font-bold">Edit</span>
@@ -81,15 +81,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  const targetId = product.id || product.name;
                   if (confirm(`Are you sure you want to delete "${product.name}"?`)) {
-                    if (onDelete) onDelete(product.id);
+                    if (onDelete) onDelete(targetId);
                   }
                 }}
                 aria-label="Delete Product"
                 title="Delete Product from Storefront"
-                className="p-1.5 rounded-full bg-red-600 hover:bg-red-500 text-white font-bold transition-all cursor-pointer shadow-lg shadow-red-600/30 flex items-center justify-center"
+                className="p-2 rounded-full bg-red-600 hover:bg-red-500 text-white font-bold transition-all cursor-pointer shadow-lg shadow-red-600/30 flex items-center justify-center min-w-[32px] min-h-[32px]"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <Trash2 className="w-4 h-4" />
               </button>
             </div>
           ) : (

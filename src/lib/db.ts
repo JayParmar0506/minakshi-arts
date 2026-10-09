@@ -47,15 +47,49 @@ let memoryDB: DBData = {
   orders: INITIAL_ORDERS,
 };
 
+function normalizeProducts(products: any[]): DBProduct[] {
+  return products.map((p, idx) => {
+    const id = p.id || (p.name ? `prod-${p.name.toLowerCase().replace(/[^a-z0-9]/g, "-")}-${idx}` : `prod-${Date.now()}-${idx}`);
+    return {
+      ...p,
+      id,
+      stock: p.stock !== undefined ? Number(p.stock) : 10,
+      soldCount: p.soldCount !== undefined ? Number(p.soldCount) : 0,
+    };
+  });
+}
+
 function readDB(): DBData {
   try {
+    let data: DBData;
     if (fs.existsSync(DB_FILE_PATH)) {
       const fileData = fs.readFileSync(DB_FILE_PATH, "utf-8");
-      return JSON.parse(fileData);
+      data = JSON.parse(fileData);
     } else {
-      writeDB(memoryDB);
-      return memoryDB;
+      data = memoryDB;
     }
+
+    // Ensure all products have IDs
+    let hasMissingId = false;
+    data.products = data.products.map((p, idx) => {
+      if (!p.id) {
+        hasMissingId = true;
+        return {
+          ...p,
+          id: p.name ? `prod-${p.name.toLowerCase().replace(/[^a-z0-9]/g, "-")}-${idx}` : `prod-${Date.now()}-${idx}`,
+          stock: p.stock !== undefined ? Number(p.stock) : 10,
+          soldCount: p.soldCount !== undefined ? Number(p.soldCount) : 0,
+        };
+      }
+      return p;
+    });
+
+    if (hasMissingId) {
+      writeDB(data);
+    }
+
+    memoryDB = data;
+    return data;
   } catch (err) {
     console.error("DB Read error, using memory DB:", err);
     return memoryDB;
@@ -81,7 +115,7 @@ export const db = {
   },
 
   getProductById: (id: string): DBProduct | undefined => {
-    return readDB().products.find((p) => p.id === id);
+    return readDB().products.find((p) => p.id === id || p.name === id || encodeURIComponent(p.name) === id);
   },
 
   addProduct: (newProduct: Omit<DBProduct, "id" | "soldCount"> & { id?: string }): DBProduct => {
@@ -99,7 +133,7 @@ export const db = {
 
   updateProduct: (id: string, updates: Partial<DBProduct>): DBProduct | null => {
     const data = readDB();
-    const idx = data.products.findIndex((p) => p.id === id);
+    const idx = data.products.findIndex((p) => p.id === id || p.name === id || encodeURIComponent(p.name) === id);
     if (idx === -1) return null;
 
     data.products[idx] = {
@@ -115,7 +149,10 @@ export const db = {
   deleteProduct: (id: string): boolean => {
     const data = readDB();
     const initialLen = data.products.length;
-    data.products = data.products.filter((p) => p.id !== id);
+    const decodeId = decodeURIComponent(id);
+    data.products = data.products.filter(
+      (p) => p.id !== id && p.id !== decodeId && p.name !== id && p.name !== decodeId
+    );
     if (data.products.length !== initialLen) {
       writeDB(data);
       return true;

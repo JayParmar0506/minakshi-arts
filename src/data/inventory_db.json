@@ -1,6 +1,7 @@
 {
   "products": [
     {
+      "id": "prod-jay-0",
       "name": "jay",
       "subtitle": "sdfws",
       "category": "candles",
