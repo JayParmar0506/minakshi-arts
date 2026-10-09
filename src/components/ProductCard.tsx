@@ -1,0 +1,177 @@
+"use client";
+
+import React, { useState } from "react";
+import { Product } from "@/data/products";
+import { useShop } from "@/context/ShopContext";
+import { Heart, Star, Clock, Maximize2, ShoppingBag, Check, Edit } from "lucide-react";
+import { motion } from "framer-motion";
+
+interface ProductCardProps {
+  product: Product;
+  onEdit?: (product: Product) => void;
+}
+
+export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit }) => {
+  const { user, addToCart, toggleFavorite, isFavorite, setQuickViewProduct } = useShop();
+  const [isHovered, setIsHovered] = useState(false);
+  const [isAdded, setIsAdded] = useState(false);
+
+  const favorited = isFavorite(product.id);
+  const isAdmin = user?.role === "admin" || user?.email === "jayshanti567@gmail.com";
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToCart(product);
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 1800);
+  };
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      transition={{ duration: 0.4 }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={() => setQuickViewProduct(product)}
+      className="glass-panel rounded-3xl p-4 sm:p-5 border border-white/10 hover:border-gold-500/40 transition-all duration-300 flex flex-col justify-between group relative shadow-xl hover:shadow-2xl hover:shadow-black/60 cursor-pointer"
+    >
+      <div>
+        {/* Image Container with secondary hover flip */}
+        <div className="relative aspect-square rounded-2xl overflow-hidden mb-4 bg-obsidian border border-white/5 group-hover:border-gold-500/30 transition-colors">
+          {/* Primary Image */}
+          <img
+            src={isHovered && product.images[1] ? product.images[1] : product.images[0]}
+            alt={product.name}
+            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+          />
+
+          <div className="absolute inset-0 bg-gradient-to-t from-obsidian/80 via-transparent to-transparent opacity-60" />
+
+          {/* Tag Badge */}
+          {product.tag && (
+            <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-obsidian/80 backdrop-blur-md border border-gold-500/30 text-gold-400 text-[10px] font-bold uppercase tracking-wider">
+              {product.tag}
+            </div>
+          )}
+
+          {/* Admin Edit Button OR Client Favorite Button */}
+          {isAdmin ? (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onEdit) {
+                  onEdit(product);
+                } else {
+                  window.location.href = "/admin";
+                }
+              }}
+              aria-label="Edit Product"
+              title="Edit Product Name, Price, Photo, & Details"
+              className="absolute top-3 right-3 px-3 py-2 rounded-full bg-gradient-to-r from-gold-500 to-terracotta-600 text-obsidian font-bold hover:scale-105 transition-all cursor-pointer shadow-lg shadow-gold-500/30 flex items-center gap-1 text-xs z-10"
+            >
+              <Edit className="w-3.5 h-3.5" />
+              <span className="text-[10px] uppercase font-bold">Edit</span>
+            </button>
+          ) : (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFavorite(product.id);
+              }}
+              aria-label="Toggle Favorite"
+              className={`absolute top-3 right-3 p-2.5 rounded-full backdrop-blur-md transition-all cursor-pointer ${
+                favorited
+                  ? "bg-terracotta-600 text-white shadow-lg shadow-terracotta-600/40"
+                  : "bg-obsidian/60 text-sand-200 hover:text-white hover:bg-obsidian/90"
+              }`}
+            >
+              <Heart className={`w-4 h-4 ${favorited ? "fill-white" : ""}`} />
+            </button>
+          )}
+
+          {/* Quick View Button (hover overlay) */}
+          <div className="absolute inset-x-4 bottom-4 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setQuickViewProduct(product);
+              }}
+              className="w-full py-2.5 rounded-xl bg-obsidian/80 hover:bg-gold-500 backdrop-blur-md text-sand-100 hover:text-obsidian border border-white/20 font-serif text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+            >
+              <Maximize2 className="w-3.5 h-3.5" />
+              Quick View
+            </button>
+          </div>
+        </div>
+
+        {/* Product Details */}
+        <div className="space-y-2 mb-4">
+          {/* Rating & Burn time/dimensions */}
+          <div className="flex items-center justify-between text-xs text-sand-400">
+            <div className="flex items-center gap-1 text-gold-400 font-semibold">
+              <Star className="w-3.5 h-3.5 fill-gold-400" />
+              <span>{product.rating}</span>
+              <span className="text-sand-400 font-normal">({product.reviewsCount})</span>
+            </div>
+
+            {product.specs.burnTime ? (
+              <span className="flex items-center gap-1 text-[11px] text-sand-300 bg-white/5 px-2 py-0.5 rounded-md">
+                <Clock className="w-3 h-3 text-gold-400" />
+                {product.specs.burnTime}
+              </span>
+            ) : product.specs.dimensions ? (
+              <span className="text-[11px] text-sand-300 bg-white/5 px-2 py-0.5 rounded-md">
+                {product.specs.dimensions}
+              </span>
+            ) : null}
+          </div>
+
+          <h3 className="font-serif text-lg font-bold text-sand-100 group-hover:text-gold-400 transition-colors line-clamp-1">
+            {product.name}
+          </h3>
+          <p className="text-xs text-sand-300/80 font-sans line-clamp-1 font-light">
+            {product.subtitle}
+          </p>
+        </div>
+      </div>
+
+      {/* Footer: Price & Add to Cart */}
+      <div className="flex items-center justify-between pt-3 border-t border-white/10">
+        <div>
+          <span className="text-xl font-serif font-bold text-gold-400">
+            ₹{product.price.toLocaleString()}
+          </span>
+          {product.originalPrice && (
+            <span className="text-xs text-sand-400 line-through ml-2">
+              ₹{product.originalPrice.toLocaleString()}
+            </span>
+          )}
+        </div>
+
+        <button
+          onClick={handleAddToCart}
+          className={`px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-md cursor-pointer ${
+            isAdded
+              ? "bg-green-600 text-white"
+              : "bg-gradient-to-r from-gold-500 to-terracotta-600 text-obsidian hover:opacity-90 shadow-gold-500/20"
+          }`}
+        >
+          {isAdded ? (
+            <>
+              <Check className="w-4 h-4" />
+              <span>Added</span>
+            </>
+          ) : (
+            <>
+              <ShoppingBag className="w-4 h-4" />
+              <span>Add to Bag</span>
+            </>
+          )}
+        </button>
+      </div>
+    </motion.div>
+  );
+};
