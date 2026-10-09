@@ -78,8 +78,8 @@ export const Navbar: React.FC = () => {
             </div>
           </a>
 
-          {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center gap-7">
+          {/* Desktop Nav Links (Hidden under 768px, visible md: and above) */}
+          <div className="hidden md:flex items-center gap-5 lg:gap-7">
             {navLinks.map((link) =>
               link.href ? (
                 <a
@@ -116,12 +116,12 @@ export const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* Actions */}
+          {/* Actions - No overlap with JAY PARMAR badge & Cart */}
           <div className="flex items-center gap-2 sm:gap-3">
             {/* User Session Profile & Log Out Button */}
             {user ? (
-              <div className="flex items-center gap-1.5 sm:gap-2 bg-white/5 border border-gold-500/30 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full">
-                <span className="text-xs font-serif font-bold text-gold-300 truncate max-w-[75px] sm:max-w-[130px]">
+              <div className="flex items-center gap-2 bg-white/5 border border-gold-500/30 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full">
+                <span className="text-xs font-serif font-bold text-gold-300 truncate max-w-[85px] sm:max-w-[130px]">
                   {user.name}
                 </span>
                 <button
@@ -184,7 +184,7 @@ export const Navbar: React.FC = () => {
             <button
               onClick={() => setIsCartOpen(true)}
               aria-label="Shopping Cart"
-              className="relative flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full bg-gradient-to-r from-gold-500/20 to-terracotta-600/20 border border-gold-500/40 hover:border-gold-400 hover:bg-gold-500/30 transition-all text-gold-300 font-medium text-xs group cursor-pointer"
+              className="relative flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-gold-500/20 to-terracotta-600/20 border border-gold-500/40 hover:border-gold-400 hover:bg-gold-500/30 transition-all text-gold-300 font-medium text-xs group cursor-pointer"
             >
               <ShoppingBag className="w-4 h-4 text-gold-400 group-hover:scale-110 transition-transform" />
               <span className="hidden sm:inline font-serif tracking-wider">Bag</span>
@@ -200,10 +200,10 @@ export const Navbar: React.FC = () => {
               )}
             </button>
 
-            {/* Mobile Menu Toggle */}
+            {/* Mobile Menu Toggle (Visible under 768px) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-full text-sand-200 hover:text-gold-400 hover:bg-white/5 cursor-pointer"
+              className="md:hidden p-2 rounded-full text-sand-200 hover:text-gold-400 hover:bg-white/5 cursor-pointer"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -217,7 +217,7 @@ export const Navbar: React.FC = () => {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="lg:hidden mt-3 glass-panel-gold rounded-2xl p-5 border border-gold-500/30 flex flex-col gap-4 shadow-2xl"
+              className="md:hidden mt-3 glass-panel-gold rounded-2xl p-5 border border-gold-500/30 flex flex-col gap-4 shadow-2xl"
             >
               {navLinks.map((link) => (
                 <div key={link.name}>

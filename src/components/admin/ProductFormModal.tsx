@@ -277,7 +277,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 {/* Live Photo Preview */}
                 <div className="sm:col-span-4 flex flex-col items-center">
                   <span className="text-[10px] text-sand-400 mb-1">Photo Preview</span>
-                  <div className="w-24 h-24 rounded-xl overflow-hidden border border-gold-500/40 bg-obsidian">
+                  <div className="relative w-24 h-24 rounded-xl overflow-hidden border border-gold-500/40 bg-obsidian group">
                     <img
                       src={formData.imageUrl1 || "https://via.placeholder.com/150"}
                       alt="Preview"
@@ -286,7 +286,26 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                         e.target.src = "https://images.unsplash.com/photo-1602874801007-bd458bb1b8b6?auto=format&fit=crop&q=80&w=800";
                       }}
                     />
+                    {formData.imageUrl1 && (
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, imageUrl1: "", imageUrl2: "" })}
+                        className="absolute top-1 right-1 p-1.5 rounded-full bg-red-600 text-white hover:bg-red-500 shadow-md cursor-pointer transition-transform hover:scale-110"
+                        title="Delete / Remove Image"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
+                  {formData.imageUrl1 && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, imageUrl1: "", imageUrl2: "" })}
+                      className="mt-1 text-[10px] text-red-400 hover:text-red-300 font-bold uppercase tracking-wider cursor-pointer"
+                    >
+                      Delete Photo
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

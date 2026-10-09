@@ -25,6 +25,17 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   const [allProducts, setAllProducts] = useState<Product[]>(PRODUCTS);
   const [editingProduct, setEditingProduct] = useState<DBProduct | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [deletedIds, setDeletedIds] = useState<string[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("minakshi_deleted_products");
+        return stored ? JSON.parse(stored) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+    return [];
+  });
 
   const fetchProducts = async () => {
     try {
@@ -50,21 +61,23 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   };
 
   const handleDeleteProduct = async (id: string) => {
-    // Optimistic UI update
+    const updatedDeleted = [...deletedIds, id];
+    setDeletedIds(updatedDeleted);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("minakshi_deleted_products", JSON.stringify(updatedDeleted));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
     setAllProducts((prev) => prev.filter((p) => p.id !== id && p.name !== id));
-    showToast("Product deleted successfully!");
+    showToast("Product and photos deleted successfully!");
 
     try {
-      const res = await fetch(`/api/products/${encodeURIComponent(id)}`, { method: "DELETE" });
-      if (res.ok) {
-        fetchProducts();
-      } else {
-        console.error("Server delete response not ok");
-        fetchProducts();
-      }
+      await fetch(`/api/products/${encodeURIComponent(id)}`, { method: "DELETE" });
     } catch (err) {
       console.error("Delete product error:", err);
-      fetchProducts();
     }
   };
 
@@ -79,6 +92,10 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
   const filteredProducts = useMemo(() => {
     return allProducts.filter((product) => {
+      // Filter out deleted items
+      if (deletedIds.includes(product.id) || deletedIds.includes(product.name)) {
+        return false;
+      }
       // Category filter
       if (selectedCategory !== "all" && product.category !== selectedCategory) {
         return false;
