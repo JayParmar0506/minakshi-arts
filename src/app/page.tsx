@@ -34,11 +34,10 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-obsidian text-sand-100 relative selection:bg-gold-500 selection:text-obsidian">
-      {/* Full-Screen Initial Auth Gate Wall */}
-      <AuthGate />
-
-      {/* Main Website (Unlocked upon login) */}
-      {user && (
+      {/* Show Auth Gate when not logged in */}
+      {!user ? (
+        <AuthGate />
+      ) : (
         <>
           {/* Toast Notification Banner */}
           <AnimatePresence>

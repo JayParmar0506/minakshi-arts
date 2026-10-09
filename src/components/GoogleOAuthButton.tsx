@@ -232,59 +232,6 @@ export const GoogleOAuthButton: React.FC<GoogleOAuthButtonProps> = ({ role, onSu
         <span>{signingIn ? "Connecting to Google..." : "Sign In with Google"}</span>
       </button>
 
-      {/* Option to input custom Google Client ID */}
-      <div className="flex items-center justify-between text-[10px] text-sand-400 px-1 pt-1">
-        <span className="flex items-center gap-1">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-          Google OAuth 2.0 Integration
-        </span>
-        <button
-          type="button"
-          onClick={() => setShowConfig(!showConfig)}
-          className="text-gold-400 hover:underline flex items-center gap-1 cursor-pointer"
-        >
-          <Settings className="w-3 h-3" />
-          <span>Google Cloud Config</span>
-        </button>
-      </div>
-
-      {showConfig && (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            localStorage.setItem("prabha_google_client_id", clientId);
-            showToast("Google Client ID Saved!");
-            initGoogleGSI(clientId);
-            setShowConfig(false);
-          }}
-          className="p-3 rounded-xl bg-obsidian/90 border border-gold-500/30 space-y-2 text-xs text-left mt-2"
-        >
-          <label className="block text-sand-200 font-medium">Google Cloud OAuth Client ID</label>
-          <input
-            type="text"
-            value={clientId}
-            onChange={(e) => setClientId(e.target.value)}
-            placeholder="YOUR_CLIENT_ID.apps.googleusercontent.com"
-            className="w-full px-3 py-2 rounded-lg bg-black border border-white/10 text-sand-100 font-mono text-[11px] focus:outline-none focus:border-gold-400"
-          />
-          <div className="flex items-center justify-between pt-1">
-            <a
-              href="https://console.cloud.google.com/apis/credentials"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[10px] text-gold-400 hover:underline flex items-center gap-1"
-            >
-              Get Client ID <ExternalLink className="w-3 h-3" />
-            </a>
-            <button
-              type="submit"
-              className="px-3 py-1 rounded-lg bg-gold-500 text-obsidian font-bold text-[11px] uppercase tracking-wider"
-            >
-              Save
-            </button>
-          </div>
-        </form>
-      )}
     </div>
   );
 };
