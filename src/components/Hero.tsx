@@ -1,14 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Flame, Sparkles, ArrowRight, Eye, Star, Clock, ShieldCheck, Gift } from "lucide-react";
-import { PRODUCTS } from "@/data/products";
+import { PRODUCTS, Product } from "@/data/products";
 import { useShop } from "@/context/ShopContext";
 import LivingNebula from "@/components/ui/living-nebula-2";
 
 export const Hero: React.FC = () => {
   const { addToCart, setQuickViewProduct, setIsCustomOrderOpen } = useShop();
-  const signatureProduct = PRODUCTS[0]; // Golden Ganesha Diya Candle
+  const [signatureProduct, setSignatureProduct] = useState<Product | null>(PRODUCTS[0]);
+
+  useEffect(() => {
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setSignatureProduct(data.length > 0 ? data[0] : null);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
@@ -98,96 +109,103 @@ export const Hero: React.FC = () => {
         </div>
 
         {/* Right Column: 3D Interactive Card Showcase */}
-        <div
-          onMouseMove={handleMouseMove}
-          onMouseLeave={() => setMousePosition({ x: 0, y: 0 })}
-          className="lg:col-span-5 relative"
-        >
-          {/* Card Wrapper - Entire card is clickable */}
+        {signatureProduct && (
           <div
-            onClick={() => setQuickViewProduct(signatureProduct)}
-            style={{
-              transform: `perspective(1000px) rotateY(${mousePosition.x * 10}deg) rotateX(${-mousePosition.y * 10}deg)`,
-              transition: "transform 0.15s ease-out",
-            }}
-            className="relative glass-panel-gold rounded-3xl p-5 sm:p-7 border border-gold-500/40 shadow-2xl shadow-black group cursor-pointer hover:border-gold-400"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={() => setMousePosition({ x: 0, y: 0 })}
+            className="lg:col-span-5 relative"
           >
-            {/* Top Floating Badge */}
-            <div className="flex items-center justify-between mb-4">
-              <span className="px-3 py-1 rounded-full bg-terracotta-600/90 text-white font-sans text-[11px] uppercase tracking-wider font-semibold shadow-md">
-                {signatureProduct.tag}
-              </span>
-              <div className="flex items-center gap-1 text-gold-400 text-xs font-semibold bg-obsidian/70 px-2.5 py-1 rounded-full border border-gold-500/20">
-                <Star className="w-3.5 h-3.5 fill-gold-400" />
-                <span>{signatureProduct.rating}</span>
-                <span className="text-sand-400">({signatureProduct.reviewsCount})</span>
-              </div>
-            </div>
-
-            {/* Product Image Frame */}
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-5 border border-white/10 group-hover:border-gold-500/50 transition-colors">
-              <img
-                src={signatureProduct.images[0]}
-                alt={signatureProduct.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-obsidian/90 via-transparent to-transparent opacity-80" />
-
-              {/* Specs Tag overlay */}
-              <div className="absolute bottom-3 left-3 flex items-center gap-2 px-3 py-1.5 rounded-full bg-obsidian/80 backdrop-blur-md border border-white/15 text-xs text-sand-200">
-                <Clock className="w-3.5 h-3.5 text-gold-400" />
-                <span>Burn Time: {signatureProduct.specs.burnTime}</span>
-              </div>
-            </div>
-
-            {/* Title & Subtitle */}
-            <div className="space-y-1 mb-5">
-              <h3 className="font-serif text-xl sm:text-2xl font-bold text-sand-100 group-hover:text-gold-400 transition-colors">
-                {signatureProduct.name}
-              </h3>
-              <p className="text-xs text-sand-300/80 font-sans tracking-wide">
-                {signatureProduct.subtitle}
-              </p>
-            </div>
-
-            {/* Price & Actions */}
-            <div className="flex items-center justify-between pt-4 border-t border-white/10">
-              <div>
-                <span className="text-xl sm:text-2xl font-bold font-serif text-gold-400">
-                  ₹{signatureProduct.price.toLocaleString()}
+            {/* Card Wrapper - Entire card is clickable */}
+            <div
+              onClick={() => setQuickViewProduct(signatureProduct)}
+              style={{
+                transform: `perspective(1000px) rotateY(${mousePosition.x * 10}deg) rotateX(${-mousePosition.y * 10}deg)`,
+                transition: "transform 0.15s ease-out",
+              }}
+              className="relative glass-panel-gold rounded-3xl p-5 sm:p-7 border border-gold-500/40 shadow-2xl shadow-black group cursor-pointer hover:border-gold-400"
+            >
+              {/* Top Floating Badge */}
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-3 py-1 rounded-full bg-terracotta-600/90 text-white font-sans text-[11px] uppercase tracking-wider font-semibold shadow-md">
+                  {signatureProduct.tag || "Diwali Bestseller"}
                 </span>
-                {signatureProduct.originalPrice && (
-                  <span className="text-xs text-sand-400 line-through ml-2">
-                    ₹{signatureProduct.originalPrice.toLocaleString()}
-                  </span>
+                <div className="flex items-center gap-1 text-gold-400 text-xs font-semibold bg-obsidian/70 px-2.5 py-1 rounded-full border border-gold-500/20">
+                  <Star className="w-3.5 h-3.5 fill-gold-400" />
+                  <span>{signatureProduct.rating}</span>
+                  <span className="text-sand-400">({signatureProduct.reviewsCount})</span>
+                </div>
+              </div>
+
+              {/* Product Image Frame */}
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-5 border border-white/10 group-hover:border-gold-500/50 transition-colors">
+                <img
+                  src={signatureProduct.images[0] || "https://images.unsplash.com/photo-1602874801007-bd458bb1b8b6?auto=format&fit=crop&q=80&w=1000"}
+                  alt={signatureProduct.name}
+                  onError={(e) => {
+                    e.currentTarget.src = "https://images.unsplash.com/photo-1602874801007-bd458bb1b8b6?auto=format&fit=crop&q=80&w=1000";
+                  }}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-obsidian/90 via-transparent to-transparent opacity-80" />
+
+                {/* Specs Tag overlay */}
+                {signatureProduct.specs?.burnTime && (
+                  <div className="absolute bottom-3 left-3 flex items-center gap-2 px-3 py-1.5 rounded-full bg-obsidian/80 backdrop-blur-md border border-white/15 text-xs text-sand-200">
+                    <Clock className="w-3.5 h-3.5 text-gold-400" />
+                    <span>Burn Time: {signatureProduct.specs.burnTime}</span>
+                  </div>
                 )}
               </div>
 
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setQuickViewProduct(signatureProduct);
-                  }}
-                  className="p-2.5 sm:p-3 rounded-xl bg-white/5 hover:bg-white/10 text-sand-200 hover:text-gold-400 transition-colors border border-white/10 cursor-pointer"
-                  title="Quick View"
-                >
-                  <Eye className="w-4 h-4" />
-                </button>
+              {/* Title & Subtitle */}
+              <div className="space-y-1 mb-5">
+                <h3 className="font-serif text-xl sm:text-2xl font-bold text-sand-100 group-hover:text-gold-400 transition-colors">
+                  {signatureProduct.name}
+                </h3>
+                <p className="text-xs text-sand-300/80 font-sans tracking-wide">
+                  {signatureProduct.subtitle}
+                </p>
+              </div>
 
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addToCart(signatureProduct);
-                  }}
-                  className="px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-gold-500 to-terracotta-600 text-obsidian font-bold text-xs uppercase tracking-wider hover:opacity-90 transition-opacity shadow-lg shadow-gold-500/20 cursor-pointer"
-                >
-                  Add to Bag
-                </button>
+              {/* Price & Actions */}
+              <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                <div>
+                  <span className="text-xl sm:text-2xl font-bold font-serif text-gold-400">
+                    ₹{signatureProduct.price.toLocaleString()}
+                  </span>
+                  {signatureProduct.originalPrice && (
+                    <span className="text-xs text-sand-400 line-through ml-2">
+                      ₹{signatureProduct.originalPrice.toLocaleString()}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setQuickViewProduct(signatureProduct);
+                    }}
+                    className="p-2.5 sm:p-3 rounded-xl bg-white/5 hover:bg-white/10 text-sand-200 hover:text-gold-400 transition-colors border border-white/10 cursor-pointer"
+                    title="Quick View"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addToCart(signatureProduct);
+                    }}
+                    className="px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-gold-500 to-terracotta-600 text-obsidian font-bold text-xs uppercase tracking-wider hover:opacity-90 transition-opacity shadow-lg shadow-gold-500/20 cursor-pointer"
+                  >
+                    Add to Bag
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

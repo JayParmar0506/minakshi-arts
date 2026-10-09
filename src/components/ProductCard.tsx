@@ -44,8 +44,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
         <div className="relative aspect-[4/3] sm:aspect-square max-h-[220px] sm:max-h-none rounded-2xl overflow-hidden mb-3 sm:mb-4 bg-obsidian border border-white/10 group-hover:border-gold-500/30 transition-colors">
           {/* Primary Image */}
           <img
-            src={isHovered && product.images[1] ? product.images[1] : product.images[0]}
+            src={isHovered && product.images[1] ? product.images[1] : (product.images[0] || "https://images.unsplash.com/photo-1602874801007-bd458bb1b8b6?auto=format&fit=crop&q=80&w=1000")}
             alt={product.name}
+            onError={(e) => {
+              e.currentTarget.src = "https://images.unsplash.com/photo-1602874801007-bd458bb1b8b6?auto=format&fit=crop&q=80&w=1000";
+            }}
             className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
           />
 

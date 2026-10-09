@@ -22,27 +22,16 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<"featured" | "price-low" | "price-high" | "rating">("featured");
   const [onlyFavorites, setOnlyFavorites] = useState(false);
-  const [allProducts, setAllProducts] = useState<Product[]>(PRODUCTS);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<DBProduct | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [deletedIds, setDeletedIds] = useState<string[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const stored = localStorage.getItem("minakshi_deleted_products");
-        return stored ? JSON.parse(stored) : [];
-      } catch (e) {
-        return [];
-      }
-    }
-    return [];
-  });
 
   const fetchProducts = async () => {
     try {
       const res = await fetch("/api/products");
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           setAllProducts(data);
         }
       }
@@ -61,21 +50,14 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   };
 
   const handleDeleteProduct = async (id: string) => {
-    const updatedDeleted = [...deletedIds, id];
-    setDeletedIds(updatedDeleted);
-    if (typeof window !== "undefined") {
-      try {
-        localStorage.setItem("minakshi_deleted_products", JSON.stringify(updatedDeleted));
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
     setAllProducts((prev) => prev.filter((p) => p.id !== id && p.name !== id));
-    showToast("Product and photos deleted successfully!");
+    showToast("Product deleted permanently!");
 
     try {
-      await fetch(`/api/products/${encodeURIComponent(id)}`, { method: "DELETE" });
+      const res = await fetch(`/api/products/${encodeURIComponent(id)}`, { method: "DELETE" });
+      if (res.ok) {
+        fetchProducts();
+      }
     } catch (err) {
       console.error("Delete product error:", err);
     }
@@ -92,10 +74,6 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
   const filteredProducts = useMemo(() => {
     return allProducts.filter((product) => {
-      // Filter out deleted items
-      if (deletedIds.includes(product.id) || deletedIds.includes(product.name)) {
-        return false;
-      }
       // Category filter
       if (selectedCategory !== "all" && product.category !== selectedCategory) {
         return false;
