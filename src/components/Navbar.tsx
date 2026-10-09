@@ -116,12 +116,12 @@ export const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* Actions - No overlap with JAY PARMAR badge & Cart */}
+          {/* Actions - No overlap: Desktop shows full controls; Mobile (< 768px) shows only Cart + Hamburger */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* User Session Profile & Log Out Button */}
+            {/* User Session Profile & Log Out Button - Hidden on mobile top bar, visible md: and above */}
             {user ? (
-              <div className="flex items-center gap-1.5 sm:gap-2 bg-white/5 border border-gold-500/30 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full shrink-0">
-                <span className="text-xs font-serif font-bold text-gold-300 truncate max-w-[110px] sm:max-w-[130px]">
+              <div className="hidden md:flex items-center gap-1.5 sm:gap-2 bg-white/5 border border-gold-500/30 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full shrink-0">
+                <span className="text-xs font-serif font-bold text-gold-300 truncate max-w-[130px]">
                   {user.name}
                 </span>
                 <button
@@ -130,46 +130,46 @@ export const Navbar: React.FC = () => {
                   title="Sign Out / Log Out"
                 >
                   <LogOut className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Log Out</span>
+                  <span>Log Out</span>
                 </button>
               </div>
             ) : (
               <button
                 onClick={() => setIsLoginOpen(true)}
                 aria-label="User Account Sign In"
-                className="p-2 sm:p-2.5 rounded-full text-sand-200 hover:text-gold-400 hover:bg-white/5 transition-all cursor-pointer"
+                className="hidden md:flex p-2 sm:p-2.5 rounded-full text-sand-200 hover:text-gold-400 hover:bg-white/5 transition-all cursor-pointer"
                 title="Sign In / Login"
               >
                 <User className="w-4 h-4" />
               </button>
             )}
 
-            {/* Order History Trigger */}
+            {/* Order History Trigger - Hidden on mobile, visible md: and above */}
             <button
               onClick={() => setIsOrderHistoryOpen(true)}
               aria-label="Order History"
-              className="p-2 sm:p-2.5 rounded-full text-sand-200 hover:text-gold-400 hover:bg-white/5 transition-all cursor-pointer"
+              className="hidden md:flex p-2 sm:p-2.5 rounded-full text-sand-200 hover:text-gold-400 hover:bg-white/5 transition-all cursor-pointer"
               title="View Order History"
             >
               <Package className="w-4 h-4" />
             </button>
 
-            {/* Search Trigger */}
+            {/* Search Trigger - Hidden on mobile, visible md: and above */}
             <button
               onClick={() => setIsSearchOpen(true)}
               aria-label="Search Products"
-              className="p-2 sm:p-2.5 rounded-full text-sand-200 hover:text-gold-400 hover:bg-white/5 transition-all cursor-pointer"
+              className="hidden md:flex p-2 sm:p-2.5 rounded-full text-sand-200 hover:text-gold-400 hover:bg-white/5 transition-all cursor-pointer"
               title="Search"
             >
               <Search className="w-4 h-4" />
             </button>
 
-            {/* Favorites Icon */}
+            {/* Favorites Icon - Hidden on mobile top bar, visible md: and above */}
             <a
               href="#catalog"
               onClick={(e) => handleSmoothScroll(e, "#catalog")}
               aria-label="Favorites"
-              className="relative p-2 sm:p-2.5 rounded-full text-sand-200 hover:text-gold-400 hover:bg-white/5 transition-all cursor-pointer"
+              className="hidden md:flex relative p-2 sm:p-2.5 rounded-full text-sand-200 hover:text-gold-400 hover:bg-white/5 transition-all cursor-pointer"
               title="Saved Favorites"
             >
               <Heart className="w-4 h-4" />
@@ -180,7 +180,7 @@ export const Navbar: React.FC = () => {
               )}
             </a>
 
-            {/* Cart Drawer Trigger */}
+            {/* Cart Drawer Trigger - Visible on both Mobile & Desktop */}
             <button
               onClick={() => setIsCartOpen(true)}
               aria-label="Shopping Cart"
@@ -200,17 +200,18 @@ export const Navbar: React.FC = () => {
               )}
             </button>
 
-            {/* Mobile Menu Toggle (Visible under 768px) */}
+            {/* Mobile Menu Toggle (Visible under 768px - md:hidden) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden p-2 rounded-full text-sand-200 hover:text-gold-400 hover:bg-white/5 cursor-pointer"
+              aria-label="Toggle Menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </nav>
 
-        {/* Mobile Dropdown Menu */}
+        {/* Mobile Dropdown Menu (Under 768px) */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
@@ -219,6 +220,40 @@ export const Navbar: React.FC = () => {
               exit={{ opacity: 0, y: -10 }}
               className="md:hidden mt-3 glass-panel-gold rounded-2xl p-5 border border-gold-500/30 flex flex-col gap-4 shadow-2xl"
             >
+              {/* User Account / Profile Badge inside drawer */}
+              {user ? (
+                <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                  <div className="flex items-center gap-2">
+                    <User className="w-4 h-4 text-gold-400" />
+                    <span className="text-xs font-serif font-bold text-gold-300">
+                      {user.name}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      logout();
+                    }}
+                    className="text-xs font-bold text-terracotta-400 hover:text-terracotta-300 flex items-center gap-1 uppercase tracking-wider cursor-pointer"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Log Out</span>
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setIsLoginOpen(true);
+                  }}
+                  className="text-sm font-serif tracking-widest text-sand-100 hover:text-gold-400 transition-colors block py-2 border-b border-white/10 flex items-center gap-2 cursor-pointer w-full text-left"
+                >
+                  <User className="w-4 h-4 text-gold-400" />
+                  <span>Client Sign In / Login</span>
+                </button>
+              )}
+
+              {/* Navigation Links */}
               {navLinks.map((link) => (
                 <div key={link.name}>
                   {link.href ? (
@@ -246,35 +281,48 @@ export const Navbar: React.FC = () => {
                 </div>
               ))}
 
-              {user ? (
+              {/* Additional Mobile Actions */}
+              <div className="pt-2 border-t border-white/10 flex flex-col gap-2">
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    logout();
+                    setIsSearchOpen(true);
                   }}
-                  className="text-sm font-serif tracking-widest text-terracotta-400 hover:text-terracotta-300 transition-colors block py-1 flex items-center gap-2 cursor-pointer"
+                  className="text-sm font-serif tracking-widest text-sand-200 hover:text-gold-400 transition-colors flex items-center gap-2 py-1 w-full text-left"
                 >
-                  <LogOut className="w-4 h-4" />
-                  <span>Log Out ({user.name})</span>
+                  <Search className="w-4 h-4 text-gold-400" />
+                  <span>Search Catalog</span>
                 </button>
-              ) : (
+
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    setIsLoginOpen(true);
+                    setIsOrderHistoryOpen(true);
                   }}
-                  className="text-sm font-serif tracking-widest text-sand-100 hover:text-gold-400 transition-colors block py-1 flex items-center gap-2 cursor-pointer"
+                  className="text-sm font-serif tracking-widest text-sand-200 hover:text-gold-400 transition-colors flex items-center gap-2 py-1 w-full text-left"
                 >
-                  <User className="w-4 h-4 text-gold-400" />
-                  <span>Client Sign In / Login</span>
+                  <Package className="w-4 h-4 text-gold-400" />
+                  <span>My Orders</span>
                 </button>
-              )}
+
+                <a
+                  href="#catalog"
+                  onClick={(e) => {
+                    setMobileMenuOpen(false);
+                    handleSmoothScroll(e, "#catalog");
+                  }}
+                  className="text-sm font-serif tracking-widest text-sand-200 hover:text-gold-400 transition-colors flex items-center gap-2 py-1"
+                >
+                  <Heart className="w-4 h-4 text-terracotta-500" />
+                  <span>Saved Favorites ({favorites.length})</span>
+                </a>
+              </div>
 
               {(user?.email?.toLowerCase() === "jayshanti567@gmail.com" || user?.role === "admin") && (
                 <Link
                   href="/admin"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm font-serif tracking-widest text-gold-400 hover:text-sand-50 transition-colors block py-1 flex items-center gap-2"
+                  className="text-sm font-serif tracking-widest text-gold-400 hover:text-sand-50 transition-colors block py-2 mt-1 border-t border-gold-500/30 flex items-center gap-2"
                 >
                   <Crown className="w-4 h-4" />
                   <span>Admin Portal & Analytics</span>

@@ -49,7 +49,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
             className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
           />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-obsidian/90 via-transparent to-transparent opacity-70" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
 
           {/* Tag Badge */}
           {product.tag && (
@@ -60,7 +60,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
 
           {/* Admin Edit & Delete Buttons OR Client Favorite Button */}
           {isAdmin ? (
-            <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 flex items-center gap-1.5 sm:gap-2 z-20">
+            <div className="z-20 absolute top-2.5 right-2.5 sm:top-3 sm:right-3 flex items-center gap-1.5 sm:gap-2">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -71,24 +71,23 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
                   }
                 }}
                 aria-label="Edit Product"
-                title="Edit Product Name, Price, Photo, & Details"
-                className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full bg-gradient-to-r from-gold-500 to-terracotta-600 text-obsidian font-bold hover:scale-105 transition-all cursor-pointer shadow-lg shadow-gold-500/30 flex items-center gap-1 text-[11px]"
+                title="Edit Product Details"
+                className="p-1.5 sm:p-2 bg-black/70 backdrop-blur-md rounded-full border border-gold-500/50 hover:bg-gold-500/30 text-gold-400 transition-all cursor-pointer shadow-lg flex items-center justify-center"
               >
-                <Edit className="w-3.5 h-3.5" />
-                <span className="uppercase font-bold">Edit</span>
+                <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </button>
 
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   const targetId = product.id || product.name;
-                  if (confirm(`Are you sure you want to delete "${product.name}"?`)) {
+                  if (confirm("Are you sure you want to delete this product?")) {
                     if (onDelete) onDelete(targetId);
                   }
                 }}
                 aria-label="Delete Product"
-                title="Delete Product from Storefront"
-                className="p-1.5 sm:p-2 rounded-full bg-red-600 hover:bg-red-500 text-white font-bold transition-all cursor-pointer shadow-lg shadow-red-600/30 flex items-center justify-center min-w-[30px] min-h-[30px] sm:min-w-[32px] sm:min-h-[32px]"
+                title="Delete Product permanently"
+                className="p-2 bg-black/70 backdrop-blur-md rounded-full border border-red-500/50 hover:bg-red-900/50 text-red-400 transition-all cursor-pointer shadow-lg flex items-center justify-center"
               >
                 <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </button>

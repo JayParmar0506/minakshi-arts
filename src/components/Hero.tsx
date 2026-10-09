@@ -53,13 +53,13 @@ export const Hero: React.FC = () => {
           {/* Headline */}
           <h1 className="font-serif text-2xl sm:text-3xl md:text-5xl xl:text-7xl font-bold tracking-tight text-sand-50 leading-tight sm:leading-[1.1]">
             Sacred Glow. <br />
-            <span className="bg-gradient-to-r from-gold-200 via-gold-300 to-diya-amber bg-clip-text text-transparent">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 font-serif font-bold text-2xl sm:text-3xl md:text-5xl xl:text-7xl tracking-wide drop-shadow-md">
               Handcrafted Traditions.
             </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-sand-200 text-sm sm:text-base xl:text-lg max-w-2xl font-light leading-relaxed mt-3">
+          <p className="text-neutral-200 text-sm sm:text-base xl:text-lg max-w-2xl font-light leading-relaxed mt-3 px-1">
             Elevate your home this festive season with bespoke tactile clay wall murals, architectural soy wax candles infused with saffron & sandalwood, and heirloom brass-inlaid Ganeshas.
           </p>
 
@@ -75,13 +75,13 @@ export const Hero: React.FC = () => {
             </div>
           </div>
 
-          {/* CTAs - Stacked vertically on mobile, row on sm+ */}
+          {/* CTAs - High Converting Luxury Button styling for mobile & desktop */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2 w-full sm:w-auto">
             <button
               onClick={handleScrollToCatalog}
-              className="relative w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-full bg-gradient-to-r from-gold-500 via-diya-amber to-terracotta-600 text-obsidian font-semibold text-xs sm:text-sm tracking-wider uppercase shadow-xl shadow-gold-500/20 hover:shadow-gold-500/40 hover:scale-105 transition-all group overflow-hidden cursor-pointer"
+              className="relative w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 sm:py-4 rounded-xl sm:rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-black font-bold uppercase tracking-wider shadow-lg shadow-amber-500/20 active:scale-95 hover:scale-105 transition-all group overflow-hidden cursor-pointer"
             >
-              <span className="relative z-10 flex items-center gap-2">
+              <span className="relative z-10 flex items-center gap-2 text-xs sm:text-sm font-bold">
                 Explore Festive Drops
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </span>
