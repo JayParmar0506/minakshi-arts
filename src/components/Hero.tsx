@@ -28,8 +28,8 @@ export const Hero: React.FC = () => {
 
   return (
     <section className="relative pt-24 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-8 flex items-center overflow-hidden">
-      {/* Living Nebula Background */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none opacity-60">
+      {/* Living Nebula Background - Hidden on mobile, active on desktop */}
+      <div className="hidden sm:block absolute inset-0 w-full h-full pointer-events-none opacity-60">
         <LivingNebula particleCount={1000} trailLength={0.15} canvasGlow={15} />
       </div>
 
@@ -53,13 +53,13 @@ export const Hero: React.FC = () => {
           {/* Headline */}
           <h1 className="font-serif text-3xl sm:text-5xl xl:text-7xl font-bold tracking-tight text-sand-50 leading-[1.1]">
             Sacred Glow. <br />
-            <span className="bg-gradient-to-r from-gold-200 via-gold-400 to-terracotta-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-gold-200 via-gold-400 to-terracotta-400 bg-clip-text text-transparent drop-shadow-sm">
               Handcrafted Traditions.
             </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-sand-300/90 text-sm sm:text-base xl:text-lg max-w-2xl font-light leading-relaxed">
+          <p className="text-sand-100/95 text-sm sm:text-base xl:text-lg max-w-2xl font-medium sm:font-light leading-relaxed">
             Elevate your home this festive season with bespoke tactile clay wall murals, architectural soy wax candles infused with saffron & sandalwood, and heirloom brass-inlaid Ganeshas.
           </p>
 
