@@ -121,7 +121,7 @@ export const Navbar: React.FC = () => {
             {/* User Session Profile & Log Out Button */}
             {user ? (
               <div className="flex items-center gap-1.5 sm:gap-2 bg-white/5 border border-gold-500/30 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full shrink-0">
-                <span className="text-xs font-serif font-bold text-gold-300 truncate max-w-[120px] sm:max-w-[130px]">
+                <span className="text-xs font-serif font-bold text-gold-300 truncate max-w-[110px] sm:max-w-[130px]">
                   {user.name}
                 </span>
                 <button

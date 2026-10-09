@@ -37,11 +37,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => setQuickViewProduct(product)}
-      className="glass-panel bg-obsidian/90 sm:bg-obsidian/50 rounded-3xl p-4 sm:p-5 border border-white/20 sm:border-white/10 hover:border-gold-500/40 transition-all duration-300 flex flex-col justify-between group relative shadow-xl hover:shadow-2xl hover:shadow-black/60 cursor-pointer"
+      className="glass-panel bg-obsidian/90 sm:bg-obsidian/50 rounded-3xl p-3.5 sm:p-5 border border-white/20 sm:border-white/10 hover:border-gold-500/40 transition-all duration-300 flex flex-col justify-between group relative shadow-xl hover:shadow-2xl hover:shadow-black/60 cursor-pointer max-h-[380px] sm:max-h-none"
     >
       <div>
-        {/* Image Container with secondary hover flip */}
-        <div className="relative aspect-square rounded-2xl overflow-hidden mb-4 bg-obsidian border border-white/10 group-hover:border-gold-500/30 transition-colors">
+        {/* Image Container with secondary hover flip - Compact max height on mobile */}
+        <div className="relative aspect-[4/3] sm:aspect-square max-h-[220px] sm:max-h-none rounded-2xl overflow-hidden mb-3 sm:mb-4 bg-obsidian border border-white/10 group-hover:border-gold-500/30 transition-colors">
           {/* Primary Image */}
           <img
             src={isHovered && product.images[1] ? product.images[1] : product.images[0]}
@@ -53,14 +53,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
 
           {/* Tag Badge */}
           {product.tag && (
-            <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-obsidian/90 backdrop-blur-md border border-gold-500/40 text-gold-300 text-[11px] sm:text-[10px] font-bold uppercase tracking-wider">
+            <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-obsidian/90 backdrop-blur-md border border-gold-500/40 text-gold-300 text-[10px] sm:text-[10px] font-bold uppercase tracking-wider">
               {product.tag}
             </div>
           )}
 
           {/* Admin Edit & Delete Buttons OR Client Favorite Button */}
           {isAdmin ? (
-            <div className="absolute top-3 right-3 flex items-center gap-2 z-20">
+            <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 flex items-center gap-1.5 sm:gap-2 z-20">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -72,7 +72,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
                 }}
                 aria-label="Edit Product"
                 title="Edit Product Name, Price, Photo, & Details"
-                className="px-3.5 py-2 rounded-full bg-gradient-to-r from-gold-500 to-terracotta-600 text-obsidian font-bold hover:scale-105 transition-all cursor-pointer shadow-lg shadow-gold-500/30 flex items-center gap-1.5 text-xs sm:text-[11px]"
+                className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full bg-gradient-to-r from-gold-500 to-terracotta-600 text-obsidian font-bold hover:scale-105 transition-all cursor-pointer shadow-lg shadow-gold-500/30 flex items-center gap-1 text-[11px]"
               >
                 <Edit className="w-3.5 h-3.5" />
                 <span className="uppercase font-bold">Edit</span>
@@ -88,9 +88,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
                 }}
                 aria-label="Delete Product"
                 title="Delete Product from Storefront"
-                className="p-2 rounded-full bg-red-600 hover:bg-red-500 text-white font-bold transition-all cursor-pointer shadow-lg shadow-red-600/30 flex items-center justify-center min-w-[32px] min-h-[32px]"
+                className="p-1.5 sm:p-2 rounded-full bg-red-600 hover:bg-red-500 text-white font-bold transition-all cursor-pointer shadow-lg shadow-red-600/30 flex items-center justify-center min-w-[30px] min-h-[30px] sm:min-w-[32px] sm:min-h-[32px]"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </button>
             </div>
           ) : (
@@ -100,7 +100,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
                 toggleFavorite(product.id);
               }}
               aria-label="Toggle Favorite"
-              className={`absolute top-3 right-3 p-2.5 rounded-full backdrop-blur-md transition-all cursor-pointer ${
+              className={`absolute top-2.5 right-2.5 sm:top-3 sm:right-3 p-2 sm:p-2.5 rounded-full backdrop-blur-md transition-all cursor-pointer ${
                 favorited
                   ? "bg-terracotta-600 text-white shadow-lg shadow-terracotta-600/40"
                   : "bg-obsidian/70 text-sand-100 hover:text-white hover:bg-obsidian/90"
@@ -125,10 +125,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
           </div>
         </div>
 
-        {/* Product Details */}
-        <div className="space-y-2 mb-4">
+        {/* Product Details with leading-snug */}
+        <div className="space-y-1 mb-3 sm:mb-4">
           {/* Rating & Burn time/dimensions */}
-          <div className="flex items-center justify-between text-xs text-sand-400">
+          <div className="flex items-center justify-between text-xs text-sand-400 mb-1">
             <div className="flex items-center gap-1 text-gold-400 font-semibold">
               <Star className="w-3.5 h-3.5 fill-gold-400" />
               <span>{product.rating}</span>
@@ -147,10 +147,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
             ) : null}
           </div>
 
-          <h3 className="font-serif text-base sm:text-lg font-bold text-sand-100 group-hover:text-gold-400 transition-colors line-clamp-1">
+          <h3 className="font-serif text-base sm:text-lg font-bold text-sand-100 group-hover:text-gold-400 transition-colors line-clamp-1 leading-snug">
             {product.name}
           </h3>
-          <p className="text-xs text-sand-300/80 font-sans line-clamp-1 font-light">
+          <p className="text-xs text-sand-300/80 font-sans line-clamp-1 font-light leading-snug">
             {product.subtitle}
           </p>
         </div>
