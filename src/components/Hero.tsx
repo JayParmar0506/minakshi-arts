@@ -28,8 +28,8 @@ export const Hero: React.FC = () => {
 
   return (
     <section className="relative pt-24 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-8 flex items-center overflow-hidden">
-      {/* Living Nebula Background - Hidden on mobile, active on desktop */}
-      <div className="hidden sm:block absolute inset-0 w-full h-full pointer-events-none opacity-60">
+      {/* Living Nebula Background - Hidden on mobile/tablet (< 1024px), active only on laptop/desktop (>= 1024px) */}
+      <div className="hidden lg:block absolute inset-0 w-full h-full pointer-events-none opacity-60">
         <LivingNebula particleCount={1000} trailLength={0.15} canvasGlow={15} />
       </div>
 
