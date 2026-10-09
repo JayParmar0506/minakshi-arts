@@ -51,7 +51,7 @@ export const Hero: React.FC = () => {
           </div>
 
           {/* Headline */}
-          <h1 className="font-serif text-3xl sm:text-5xl xl:text-7xl font-bold tracking-tight text-sand-50 leading-[1.1]">
+          <h1 className="font-serif text-2xl sm:text-3xl md:text-5xl xl:text-7xl font-bold tracking-tight text-sand-50 leading-tight sm:leading-[1.1]">
             Sacred Glow. <br />
             <span className="bg-gradient-to-r from-gold-200 via-gold-300 to-diya-amber bg-clip-text text-transparent">
               Handcrafted Traditions.
@@ -59,7 +59,7 @@ export const Hero: React.FC = () => {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-sand-100 text-sm sm:text-base xl:text-lg max-w-2xl font-light leading-relaxed">
+          <p className="text-sand-200 text-sm sm:text-base xl:text-lg max-w-2xl font-light leading-relaxed mt-3">
             Elevate your home this festive season with bespoke tactile clay wall murals, architectural soy wax candles infused with saffron & sandalwood, and heirloom brass-inlaid Ganeshas.
           </p>
 
@@ -75,11 +75,11 @@ export const Hero: React.FC = () => {
             </div>
           </div>
 
-          {/* CTAs */}
-          <div className="flex flex-wrap items-center gap-4 pt-2">
+          {/* CTAs - Stacked vertically on mobile, row on sm+ */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2 w-full sm:w-auto">
             <button
               onClick={handleScrollToCatalog}
-              className="relative inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-gold-500 via-diya-amber to-terracotta-600 text-obsidian font-semibold text-xs sm:text-sm tracking-wider uppercase shadow-xl shadow-gold-500/20 hover:shadow-gold-500/40 hover:scale-105 transition-all group overflow-hidden cursor-pointer"
+              className="relative w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-full bg-gradient-to-r from-gold-500 via-diya-amber to-terracotta-600 text-obsidian font-semibold text-xs sm:text-sm tracking-wider uppercase shadow-xl shadow-gold-500/20 hover:shadow-gold-500/40 hover:scale-105 transition-all group overflow-hidden cursor-pointer"
             >
               <span className="relative z-10 flex items-center gap-2">
                 Explore Festive Drops
@@ -90,7 +90,7 @@ export const Hero: React.FC = () => {
 
             <button
               onClick={() => setIsCustomOrderOpen(true)}
-              className="px-8 py-4 rounded-full glass-panel border border-gold-500/40 text-sand-100 hover:text-gold-400 hover:border-gold-400 transition-all font-serif text-xs sm:text-sm tracking-widest uppercase hover:bg-gold-500/10 cursor-pointer"
+              className="w-full sm:w-auto px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-full glass-panel border border-gold-500/40 text-sand-100 hover:text-gold-400 hover:border-gold-400 transition-all font-serif text-xs sm:text-sm tracking-widest uppercase hover:bg-gold-500/10 cursor-pointer text-center"
             >
               Custom Orders
             </button>

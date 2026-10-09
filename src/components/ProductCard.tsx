@@ -147,7 +147,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
             ) : null}
           </div>
 
-          <h3 className="font-serif text-lg font-bold text-sand-100 group-hover:text-gold-400 transition-colors line-clamp-1">
+          <h3 className="font-serif text-base sm:text-lg font-bold text-sand-100 group-hover:text-gold-400 transition-colors line-clamp-1">
             {product.name}
           </h3>
           <p className="text-xs text-sand-300/80 font-sans line-clamp-1 font-light">
@@ -157,13 +157,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
       </div>
 
       {/* Footer: Price & Add to Cart */}
-      <div className="flex items-center justify-between pt-3 border-t border-white/10">
-        <div>
-          <span className="text-xl font-serif font-bold text-gold-400">
+      <div className="flex items-center justify-between pt-3 border-t border-white/10 gap-2">
+        <div className="min-w-0 flex-1">
+          <span className="text-lg sm:text-xl font-serif font-bold text-gold-400 whitespace-nowrap">
             ₹{product.price.toLocaleString()}
           </span>
           {product.originalPrice && (
-            <span className="text-xs text-sand-400 line-through ml-2">
+            <span className="text-[11px] sm:text-xs text-sand-400 line-through ml-1.5 whitespace-nowrap">
               ₹{product.originalPrice.toLocaleString()}
             </span>
           )}

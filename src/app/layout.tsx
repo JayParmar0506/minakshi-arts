@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark scroll-smooth">
-      <body className="antialiased bg-obsidian text-sand-100 min-h-screen">
+      <body className="antialiased bg-obsidian text-sand-100 min-h-screen overflow-x-hidden w-full max-w-full">
         <ShopProvider>{children}</ShopProvider>
       </body>
     </html>
