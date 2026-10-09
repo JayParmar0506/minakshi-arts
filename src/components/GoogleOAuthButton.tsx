@@ -13,8 +13,6 @@ export const GoogleOAuthButton: React.FC<GoogleOAuthButtonProps> = ({ role, onSu
   const { showToast, triggerCelebration } = useShop();
 
   const [signingIn, setSigningIn] = useState(false);
-  const [showEmailPrompt, setShowEmailPrompt] = useState(false);
-  const [inputEmail, setInputEmail] = useState("");
   const [clientId, setClientId] = useState<string>("");
   const [showConfig, setShowConfig] = useState(false);
   const googleBtnContainerRef = useRef<HTMLDivElement>(null);
@@ -26,8 +24,34 @@ export const GoogleOAuthButton: React.FC<GoogleOAuthButtonProps> = ({ role, onSu
       localStorage.removeItem("prabha_google_accounts_v2");
     } catch {}
 
-    const savedId = localStorage.getItem("prabha_google_client_id") || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
+    const savedId =
+      localStorage.getItem("prabha_google_client_id") ||
+      process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
+      "1084930771359-sdla6pkakfct7nlq8ls8lf4badccad62.apps.googleusercontent.com";
     setClientId(savedId);
+
+    // Check if redirected back from Google OAuth hash
+    if (typeof window !== "undefined" && window.location.hash) {
+      try {
+        const params = new URLSearchParams(window.location.hash.substring(1));
+        const idToken = params.get("id_token");
+        if (idToken) {
+          const base64Url = idToken.split(".")[1];
+          const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+          const jsonPayload = decodeURIComponent(
+            atob(base64)
+              .split("")
+              .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+              .join("")
+          );
+          const googleUser = JSON.parse(jsonPayload);
+          window.history.replaceState(null, "", window.location.pathname);
+          completeGoogleLogin(googleUser.email, googleUser.name, googleUser.picture);
+        }
+      } catch (err) {
+        console.error("OAuth token parse error:", err);
+      }
+    }
 
     // Dynamically load Google Identity Services Script
     if (!document.getElementById("google-gsi-script")) {
@@ -128,30 +152,54 @@ export const GoogleOAuthButton: React.FC<GoogleOAuthButtonProps> = ({ role, onSu
     setSigningIn(false);
   };
 
-  const handleManualGoogleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputEmail.trim()) {
-      alert("Please enter a valid Google email address.");
-      return;
+  const openGoogleOAuthPopup = (cid: string) => {
+    const redirectUri = window.location.origin;
+    const googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(
+      cid
+    )}&redirect_uri=${encodeURIComponent(
+      redirectUri
+    )}&response_type=token%20id_token&scope=openid%20email%20profile&nonce=${Date.now()}`;
+
+    const width = 500;
+    const height = 600;
+    const left = typeof window !== "undefined" ? window.screenX + (window.innerWidth - width) / 2 : 100;
+    const top = typeof window !== "undefined" ? window.screenY + (window.innerHeight - height) / 2 : 100;
+
+    const popup = window.open(
+      googleOAuthUrl,
+      "GoogleSignIn",
+      `width=${width},height=${height},top=${top},left=${left}`
+    );
+
+    if (!popup) {
+      // If popup blocked by mobile browser, redirect full page to Google Consent screen
+      window.location.href = googleOAuthUrl;
     }
-    completeGoogleLogin(inputEmail, inputEmail.split("@")[0]);
   };
 
   const handleGoogleBtnClick = () => {
+    const targetClientId =
+      clientId.trim() || "1084930771359-sdla6pkakfct7nlq8ls8lf4badccad62.apps.googleusercontent.com";
+
     const google = (window as any).google;
-    if (google && google.accounts && google.accounts.id && clientId.trim()) {
+    if (google && google.accounts && google.accounts.id) {
       try {
         google.accounts.id.initialize({
-          client_id: clientId.trim(),
+          client_id: targetClientId,
           callback: handleGoogleCredentialResponse,
         });
-        google.accounts.id.prompt();
+        google.accounts.id.prompt((notification: any) => {
+          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            openGoogleOAuthPopup(targetClientId);
+          }
+        });
         return;
       } catch (e) {
         console.error(e);
       }
     }
-    setShowEmailPrompt(true);
+
+    openGoogleOAuthPopup(targetClientId);
   };
 
   return (
@@ -159,9 +207,10 @@ export const GoogleOAuthButton: React.FC<GoogleOAuthButtonProps> = ({ role, onSu
       {/* Official Google GSI Render Button Container */}
       <div ref={googleBtnContainerRef} className="w-full overflow-hidden rounded-xl"></div>
 
-      {/* Fallback Custom Google Button if GSI hasn't rendered */}
+      {/* Official Native Sign In with Google Trigger Button */}
       <button
         type="button"
+        disabled={signingIn}
         onClick={handleGoogleBtnClick}
         className="w-full py-3.5 px-4 rounded-xl bg-white hover:bg-gray-100 text-gray-800 font-bold text-xs uppercase tracking-wider transition-all border border-gray-300 shadow-md flex items-center justify-center gap-3 cursor-pointer hover:scale-[1.01]"
       >
@@ -183,41 +232,8 @@ export const GoogleOAuthButton: React.FC<GoogleOAuthButtonProps> = ({ role, onSu
             d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
           />
         </svg>
-        <span>Sign In with Google</span>
+        <span>{signingIn ? "Connecting to Google..." : "Sign In with Google"}</span>
       </button>
-
-      {/* Clean Email Input Prompt */}
-      {showEmailPrompt && (
-        <form onSubmit={handleManualGoogleSubmit} className="p-3.5 rounded-2xl bg-obsidian/90 border border-gold-500/40 space-y-2.5 text-xs text-left">
-          <label className="block text-sand-200 font-medium">
-            Enter your Google Email Address
-          </label>
-          <input
-            type="email"
-            required
-            value={inputEmail}
-            onChange={(e) => setInputEmail(e.target.value)}
-            placeholder="yourname@gmail.com"
-            className="w-full px-3.5 py-2.5 rounded-xl bg-black border border-white/10 text-sand-100 text-xs focus:outline-none focus:border-gold-400"
-          />
-          <div className="flex justify-end gap-2 pt-1">
-            <button
-              type="button"
-              onClick={() => setShowEmailPrompt(false)}
-              className="px-3 py-1.5 rounded-lg text-xs text-sand-400 hover:text-sand-100"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={signingIn}
-              className="px-4 py-1.5 rounded-xl bg-gold-500 text-obsidian font-bold text-xs uppercase tracking-wider cursor-pointer"
-            >
-              {signingIn ? "Signing In..." : "Continue"}
-            </button>
-          </div>
-        </form>
-      )}
 
       {/* Option to input custom Google Client ID */}
       <div className="flex items-center justify-between text-[10px] text-sand-400 px-1 pt-1">
@@ -236,16 +252,17 @@ export const GoogleOAuthButton: React.FC<GoogleOAuthButtonProps> = ({ role, onSu
       </div>
 
       {showConfig && (
-        <form onSubmit={(e) => {
-          e.preventDefault();
-          localStorage.setItem("prabha_google_client_id", clientId);
-          showToast("Google Client ID Saved!");
-          initGoogleGSI(clientId);
-          setShowConfig(false);
-        }} className="p-3 rounded-xl bg-obsidian/90 border border-gold-500/30 space-y-2 text-xs text-left mt-2">
-          <label className="block text-sand-200 font-medium">
-            Google Cloud OAuth Client ID
-          </label>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            localStorage.setItem("prabha_google_client_id", clientId);
+            showToast("Google Client ID Saved!");
+            initGoogleGSI(clientId);
+            setShowConfig(false);
+          }}
+          className="p-3 rounded-xl bg-obsidian/90 border border-gold-500/30 space-y-2 text-xs text-left mt-2"
+        >
+          <label className="block text-sand-200 font-medium">Google Cloud OAuth Client ID</label>
           <input
             type="text"
             value={clientId}
