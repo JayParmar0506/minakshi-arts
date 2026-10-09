@@ -12,7 +12,10 @@ export async function POST(request: Request) {
     if (action === "google_login") {
       const googleEmail = email || "user.google@gmail.com";
       const googleName = name || "Google User";
-      const userRole = googleEmail.trim().toLowerCase() === "jayshanti567@gmail.com" ? "admin" : "client";
+      const adminEmails = (process.env.ADMIN_EMAIL || "jayshanti567@gmail.com")
+        .split(",")
+        .map((e) => e.trim().toLowerCase());
+      const userRole = adminEmails.includes(googleEmail.trim().toLowerCase()) ? "admin" : "client";
 
       let user = null;
       try {
