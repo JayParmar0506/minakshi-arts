@@ -38,6 +38,22 @@ html, body {
   border: 1px solid rgba(212, 175, 55, 0.35);
 }
 
+/* High Contrast Mobile Readability Overrides */
+@media (max-width: 640px) {
+  .glass-panel {
+    background: rgba(14, 14, 16, 0.88) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  }
+  .glass-panel-gold {
+    background: rgba(18, 16, 12, 0.92) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(212, 175, 55, 0.5) !important;
+  }
+}
+
 /* Glowing Border Effect */
 .gold-glow {
   box-shadow: 0 0 25px -5px rgba(212, 175, 55, 0.3);

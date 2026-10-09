@@ -3,15 +3,16 @@
 import React, { useState } from "react";
 import { Product } from "@/data/products";
 import { useShop } from "@/context/ShopContext";
-import { Heart, Star, Clock, Maximize2, ShoppingBag, Check, Edit } from "lucide-react";
+import { Heart, Star, Clock, Maximize2, ShoppingBag, Check, Edit, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface ProductCardProps {
   product: Product;
   onEdit?: (product: Product) => void;
+  onDelete?: (id: string) => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDelete }) => {
   const { user, addToCart, toggleFavorite, isFavorite, setQuickViewProduct } = useShop();
   const [isHovered, setIsHovered] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
@@ -36,11 +37,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit }) => 
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => setQuickViewProduct(product)}
-      className="glass-panel rounded-3xl p-4 sm:p-5 border border-white/10 hover:border-gold-500/40 transition-all duration-300 flex flex-col justify-between group relative shadow-xl hover:shadow-2xl hover:shadow-black/60 cursor-pointer"
+      className="glass-panel bg-obsidian/90 sm:bg-obsidian/50 rounded-3xl p-4 sm:p-5 border border-white/20 sm:border-white/10 hover:border-gold-500/40 transition-all duration-300 flex flex-col justify-between group relative shadow-xl hover:shadow-2xl hover:shadow-black/60 cursor-pointer"
     >
       <div>
         {/* Image Container with secondary hover flip */}
-        <div className="relative aspect-square rounded-2xl overflow-hidden mb-4 bg-obsidian border border-white/5 group-hover:border-gold-500/30 transition-colors">
+        <div className="relative aspect-square rounded-2xl overflow-hidden mb-4 bg-obsidian border border-white/10 group-hover:border-gold-500/30 transition-colors">
           {/* Primary Image */}
           <img
             src={isHovered && product.images[1] ? product.images[1] : product.images[0]}
@@ -48,33 +49,49 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit }) => 
             className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
           />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-obsidian/80 via-transparent to-transparent opacity-60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-obsidian/90 via-transparent to-transparent opacity-70" />
 
           {/* Tag Badge */}
           {product.tag && (
-            <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-obsidian/80 backdrop-blur-md border border-gold-500/30 text-gold-400 text-[10px] font-bold uppercase tracking-wider">
+            <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-obsidian/90 backdrop-blur-md border border-gold-500/40 text-gold-300 text-[11px] sm:text-[10px] font-bold uppercase tracking-wider">
               {product.tag}
             </div>
           )}
 
-          {/* Admin Edit Button OR Client Favorite Button */}
+          {/* Admin Edit & Delete Buttons OR Client Favorite Button */}
           {isAdmin ? (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                if (onEdit) {
-                  onEdit(product);
-                } else {
-                  window.location.href = "/admin";
-                }
-              }}
-              aria-label="Edit Product"
-              title="Edit Product Name, Price, Photo, & Details"
-              className="absolute top-3 right-3 px-3 py-2 rounded-full bg-gradient-to-r from-gold-500 to-terracotta-600 text-obsidian font-bold hover:scale-105 transition-all cursor-pointer shadow-lg shadow-gold-500/30 flex items-center gap-1 text-xs z-10"
-            >
-              <Edit className="w-3.5 h-3.5" />
-              <span className="text-[10px] uppercase font-bold">Edit</span>
-            </button>
+            <div className="absolute top-3 right-3 flex items-center gap-1.5 z-10">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onEdit) {
+                    onEdit(product);
+                  } else {
+                    window.location.href = "/admin";
+                  }
+                }}
+                aria-label="Edit Product"
+                title="Edit Product Name, Price, Photo, & Details"
+                className="px-3 py-1.5 rounded-full bg-gradient-to-r from-gold-500 to-terracotta-600 text-obsidian font-bold hover:scale-105 transition-all cursor-pointer shadow-lg shadow-gold-500/30 flex items-center gap-1 text-[11px]"
+              >
+                <Edit className="w-3.5 h-3.5" />
+                <span className="uppercase font-bold">Edit</span>
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (confirm(`Are you sure you want to delete "${product.name}"?`)) {
+                    if (onDelete) onDelete(product.id);
+                  }
+                }}
+                aria-label="Delete Product"
+                title="Delete Product from Storefront"
+                className="p-1.5 rounded-full bg-red-600 hover:bg-red-500 text-white font-bold transition-all cursor-pointer shadow-lg shadow-red-600/30 flex items-center justify-center"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
           ) : (
             <button
               onClick={(e) => {
@@ -85,7 +102,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit }) => 
               className={`absolute top-3 right-3 p-2.5 rounded-full backdrop-blur-md transition-all cursor-pointer ${
                 favorited
                   ? "bg-terracotta-600 text-white shadow-lg shadow-terracotta-600/40"
-                  : "bg-obsidian/60 text-sand-200 hover:text-white hover:bg-obsidian/90"
+                  : "bg-obsidian/70 text-sand-100 hover:text-white hover:bg-obsidian/90"
               }`}
             >
               <Heart className={`w-4 h-4 ${favorited ? "fill-white" : ""}`} />

@@ -49,6 +49,21 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
     setIsEditModalOpen(true);
   };
 
+  const handleDeleteProduct = async (id: string) => {
+    try {
+      const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        showToast("Product deleted successfully!");
+        fetchProducts();
+      } else {
+        alert("Failed to delete product.");
+      }
+    } catch (err) {
+      console.error("Delete product error:", err);
+      alert("Error deleting product.");
+    }
+  };
+
   const categories = [
     { id: "all", label: "All Drops" },
     { id: "candles", label: "Soy Candles" },
@@ -192,7 +207,12 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
         <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           <AnimatePresence>
             {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} onEdit={handleEditProduct} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                onEdit={handleEditProduct}
+                onDelete={handleDeleteProduct}
+              />
             ))}
           </AnimatePresence>
         </motion.div>
